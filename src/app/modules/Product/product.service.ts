@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { uploadOnCloudinary } from '../../utils/cloudinary';
 import { TProduct } from './product.interface';
 import ProductModel from './product.model';

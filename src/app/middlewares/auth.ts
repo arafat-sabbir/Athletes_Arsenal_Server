@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../errors/AppError';
@@ -20,7 +21,7 @@ const AuthorizeRequest = () => {
     if (!token) {
       throw new AppError(401, 'Unauthorized Access');
     }
-    jwt.verify(token, config.jwt_access_secret as string, (err: any, decoded: any) => {
+    jwt.verify(token, config.access_token_secret as string, (err: any, decoded: any) => {
       if (err) {
         throw new AppError(401, 'Unauthorized Access');
       }
