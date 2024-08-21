@@ -12,4 +12,13 @@ const addProduct = catchAsync(async (req, res) => {
   });
 });
 
-export const productController = { addProduct };
+const getProducts = catchAsync(async (req, res) => {
+  const result = await productServices.getProducts();
+  sendResponse(res, {
+    statusCode: 209,
+    message: 'Products Retrieved Successfully',
+    data: result,
+  });
+});
+
+export const productController = { addProduct,getProducts };

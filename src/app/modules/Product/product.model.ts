@@ -6,6 +6,7 @@ const productSchema = new Schema<TProduct>({
   description: { type: String, required: true },
   price: { type: Number, required: true },
   thumbnail: { type: String, required: true },
+  vendor: { type: String, required: true },
   category: { type: String, required: true },
   stockCount: { type: Number, required: true },
 });

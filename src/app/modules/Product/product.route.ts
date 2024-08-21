@@ -17,4 +17,7 @@ router.post(
   productController.addProduct
 );
 
+router.get('/products', productController.getProducts);
+
+
 export const productRoutes = router;

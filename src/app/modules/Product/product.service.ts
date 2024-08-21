@@ -16,4 +16,9 @@ const addProduct = async (file: any, product: TProduct) => {
   return newProduct;
 };
 
-export const productServices = { addProduct };
+const getProducts = async () => {
+  const products = await ProductModel.find();
+  return products;
+};
+
+export const productServices = { addProduct,getProducts };

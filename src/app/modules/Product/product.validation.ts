@@ -6,6 +6,7 @@ const addProductSchema = z.object({
     description: z.string(),
     price: z.number(),
     category: z.string(),
+    vendor: z.string(),
     stockCount: z.number(),
   }),
 });
