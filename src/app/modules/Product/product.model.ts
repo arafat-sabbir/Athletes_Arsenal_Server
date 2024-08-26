@@ -9,6 +9,7 @@ const productSchema = new Schema<TProduct>({
   vendor: { type: String, required: true },
   category: { type: String, required: true },
   stockCount: { type: Number, required: true },
+  productImages: { type: [String], required: true },
 });
 
 const ProductModel = model<TProduct>('Product', productSchema);

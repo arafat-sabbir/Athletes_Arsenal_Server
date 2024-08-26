@@ -8,7 +8,10 @@ const router = express.Router();
 
 router.post(
   '/add-product',
-  upload.single('thumbnail'),
+  upload.fields([
+    { name: 'thumbnail', maxCount: 1 }, // Accept 1 file for 'thumbnail'
+    { name: 'photos', maxCount: 10 }, // Accept 1 file for 'photo'
+  ]),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);
     next();
@@ -18,6 +21,5 @@ router.post(
 );
 
 router.get('/products', productController.getProducts);
-
 
 export const productRoutes = router;

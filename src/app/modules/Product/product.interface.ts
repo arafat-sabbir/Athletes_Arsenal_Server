@@ -6,4 +6,5 @@ export type TProduct = {
   category: string;
   stockCount: number;
   vendor: string;
+  productImages:string[]
 };
