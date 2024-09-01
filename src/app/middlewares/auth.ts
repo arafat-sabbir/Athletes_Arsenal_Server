@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../errors/AppError';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../config';
+import UserModel from '../modules/user/user.model';
 
 /**
  * Middleware to authorize requests.
@@ -11,9 +11,7 @@ import config from '../config';
  * If not, it throws an unauthorized error.
  */
 
-
-
-const AuthorizeRequest = () => {
+const AuthorizeRequest = (...roles: string[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     // Get the authorization token from the request headers
     const token = req.headers.authorization?.split(' ')[1];
@@ -21,13 +19,21 @@ const AuthorizeRequest = () => {
     if (!token) {
       throw new AppError(401, 'Unauthorized Access');
     }
-    jwt.verify(token, config.access_token_secret as string, (err: any, decoded: any) => {
-      if (err) {
+    try {
+      const decoded = jwt.verify(token, config.access_token_secret as string) as JwtPayload;
+      req.user = decoded;
+      const { userId, role } = decoded;
+      if (roles && !roles.includes(role)) {
         throw new AppError(401, 'Unauthorized Access');
       }
-      req.user = decoded as JwtPayload;
-      next();
-    });
+      const user = await UserModel.findOne({ _id:userId });
+      if (!user) {
+        throw new Error('User not found');
+      }
+    } catch (error) {
+      throw new AppError(401, 'Unauthorized Access');
+    }
+    next();
   });
 };
 

@@ -26,7 +26,12 @@ const addProduct = async (files: any, product: TProduct) => {
 };
 
 const getProducts = async (query: Record<string, unknown>) => {
-  const data = new QueryBuilder(ProductModel.find(), query).paginate();
+  const categories = (query.categories as string)?.split(","); 
+  let filterQuery = {};
+if (categories?.length > 0) {
+  filterQuery = { category: { $in: categories } };
+}
+  const data = new QueryBuilder(ProductModel.find(filterQuery), query).paginate();
   const products = await data.modelQuery;
   const totalProduct = await ProductModel.countDocuments();
   return { products, totalProduct };
