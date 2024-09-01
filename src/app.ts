@@ -5,7 +5,7 @@ import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import allRoutes from './app/routes/index';
 
 app.use(express.json());
-app.use(cors({ origin: ['http://localhost:5173'], credentials: true }));
+app.use(cors({ origin: ['http://localhost:5173',"http://localhost:4173"], credentials: true }));
 
 // use All The Routes From Routes
 app.use('/api/v1', allRoutes);

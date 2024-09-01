@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { SortOrder } from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { uploadOnCloudinary } from '../../utils/cloudinary';
 import { TProduct } from './product.interface';
@@ -26,15 +27,35 @@ const addProduct = async (files: any, product: TProduct) => {
 };
 
 const getProducts = async (query: Record<string, unknown>) => {
-  const categories = (query.categories as string)?.split(","); 
+  console.log('query', query);
+  // Handle categories filter
+  const categories = (query.categories as string)?.split(',');
   let filterQuery = {};
-if (categories?.length > 0) {
-  filterQuery = { category: { $in: categories } };
-}
-  const data = new QueryBuilder(ProductModel.find(filterQuery), query).paginate();
+  if (categories?.length > 0 && !categories.includes('all')) {
+    filterQuery = { category: { $in: categories } };
+  }
+
+  // Construct sort query
+  const sortQuery: { [key: string]: SortOrder | { $meta: any; }; } = {};
+  const sortField = "price";
+  const sortOrder = query.sort as "asc" | "desc";
+
+  if (query?.sort) {
+    sortQuery[sortField] = sortOrder === "asc" ? 1 : -1;
+  }
+  // Create QueryBuilder instance
+  const data = new QueryBuilder(
+    ProductModel.find(filterQuery).sort(sortQuery), // Pass the correct sort query
+    query
+  )
+    .paginate()
+    .search(['title']);
+
   const products = await data.modelQuery;
-  const totalProduct = await ProductModel.countDocuments();
+  const totalProduct = await ProductModel.countDocuments(filterQuery);
+
   return { products, totalProduct };
 };
+
 
 export const productServices = { addProduct, getProducts };
