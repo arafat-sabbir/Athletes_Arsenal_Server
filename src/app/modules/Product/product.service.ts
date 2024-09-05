@@ -59,7 +59,6 @@ const getProducts = async (query: Record<string, unknown>) => {
   return { products, totalProduct };
 };
 
-// Get Single Product For Specific Id From Database
 
 // Get Single Cart Product For User By User And CartProduct _id
 

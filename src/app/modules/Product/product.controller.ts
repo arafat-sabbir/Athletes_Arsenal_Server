@@ -11,7 +11,7 @@ const addProduct = catchAsync(async (req, res) => {
   });
 });
 
-// Pass The Query For Sort Filter Pagination
+// Pass The Query For Sort Filter Pagination And Get All Product
 const getProducts = catchAsync(async (req, res) => {
   const result = await productServices.getProducts(req.query);
   sendResponse(res, {
@@ -21,7 +21,7 @@ const getProducts = catchAsync(async (req, res) => {
   });
 });
 
-// Pass The Id From Params
+// Pass The Id From Params To Get Single Product
 const getProduct = catchAsync(async (req, res) => {
   const id = req.params.id;
   const result = await productServices.getProduct(id);

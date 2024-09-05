@@ -6,5 +6,10 @@ const addToCartSchema = z.object({
     quantity: z.number(),
   }),
 });
+const updateQuantitySchema = z.object({
+  body: z.object({
+    quantity: z.number(),
+  }),
+});
 
-export const cartValidation = { addToCartSchema };
+export const cartValidation = { addToCartSchema ,updateQuantitySchema};

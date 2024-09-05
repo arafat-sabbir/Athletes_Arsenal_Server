@@ -27,7 +27,7 @@ const addNewProductToCart = async (payload: TCart) => {
   return cartProduct;
 };
 
-// Get All The Cart Products Of A User By The User _id
+// Get All The Cart Products Of A User By The User _id And The Total Price Also
 const getMyCartProducts = async (id: string) => {
   const products = await CartModel.find({ user: id }).populate('product');
 
@@ -35,8 +35,38 @@ const getMyCartProducts = async (id: string) => {
     (acc, curr) => acc + curr.quantity * (curr.product as any).price,
     0
   );
-  console.log(totalPrice);
   return { products, totalPrice };
 };
 
-export const cartServices = { addNewProductToCart, getMyCartProducts };
+// Increase Or Decrease Product Quantity
+const updateCartProductQuantity = async (user: string, cartProductId: string, quantity: number) => {
+  const cartProduct = await CartModel.findOne({ user, _id: cartProductId }).populate("product");
+  if((cartProduct?.product as any)?.stockCount < quantity){
+    throw new Error('Insufficient Stock');
+  }
+  const quantityDifference = Number(quantity) - (cartProduct as any).quantity;
+  if (!cartProduct) throw new Error('Product Not Found');
+  await ProductModel.findOneAndUpdate(
+    { _id: cartProduct.product._id },
+    { $inc: { stockCount: -quantityDifference } }, // Decrease or increase stockCount accordingly
+    { new: true }
+  );
+  const result = await CartModel.updateOne(
+    { user, _id: cartProductId },
+    { quantity: Number(quantity) }
+  );
+  return result;
+};
+
+// Delete Product From Cart By User And Product _id
+const deleteProductFromCart = async (user: string, product: string) => {
+  const result = await CartModel.deleteOne({ user, _id: product });
+  return result;
+};
+
+export const cartServices = {
+  addNewProductToCart,
+  getMyCartProducts,
+  deleteProductFromCart,
+  updateCartProductQuantity,
+};
