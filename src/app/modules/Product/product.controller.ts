@@ -11,13 +11,25 @@ const addProduct = catchAsync(async (req, res) => {
   });
 });
 
+// Pass The Query For Sort Filter Pagination
 const getProducts = catchAsync(async (req, res) => {
   const result = await productServices.getProducts(req.query);
   sendResponse(res, {
-    statusCode: 209,
+    statusCode: 200,
     message: 'Products Retrieved Successfully',
     data: result,
   });
 });
 
-export const productController = { addProduct,getProducts };
+// Pass The Id From Params
+const getProduct = catchAsync(async (req, res) => {
+  const id = req.params.id;
+  const result = await productServices.getProduct(id);
+  sendResponse(res, {
+    statusCode: 200,
+    message: 'Product Retrieved Successfully',
+    data: result,
+  });
+});
+
+export const productController = { addProduct, getProducts,getProduct };

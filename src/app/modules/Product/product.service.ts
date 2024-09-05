@@ -5,6 +5,7 @@ import { uploadOnCloudinary } from '../../utils/cloudinary';
 import { TProduct } from './product.interface';
 import ProductModel from './product.model';
 
+// Add New Product To Database
 const addProduct = async (files: any, product: TProduct) => {
   const { photos, thumbnail } = files;
   if (files) {
@@ -26,6 +27,7 @@ const addProduct = async (files: any, product: TProduct) => {
   return { newProduct };
 };
 
+// Get All The Available Product From Database
 const getProducts = async (query: Record<string, unknown>) => {
   console.log('query', query);
   // Handle categories filter
@@ -36,12 +38,12 @@ const getProducts = async (query: Record<string, unknown>) => {
   }
 
   // Construct sort query
-  const sortQuery: { [key: string]: SortOrder | { $meta: any; }; } = {};
-  const sortField = "price";
-  const sortOrder = query.sort as "asc" | "desc";
+  const sortQuery: { [key: string]: SortOrder | { $meta: any } } = {};
+  const sortField = 'price';
+  const sortOrder = query.sort as 'asc' | 'desc';
 
   if (query?.sort) {
-    sortQuery[sortField] = sortOrder === "asc" ? 1 : -1;
+    sortQuery[sortField] = sortOrder === 'asc' ? 1 : -1;
   }
   // Create QueryBuilder instance
   const data = new QueryBuilder(
@@ -57,5 +59,15 @@ const getProducts = async (query: Record<string, unknown>) => {
   return { products, totalProduct };
 };
 
+// Get Single Product For Specific Id From Database
 
-export const productServices = { addProduct, getProducts };
+// Get Single Cart Product For User By User And CartProduct _id
+
+const getProduct = async (id: string) => {
+  if (!id) throw new Error('Provide And Product Id');
+  const product = await ProductModel.findOne({ _id: id });
+  if (!product) throw new Error('Product Not Found');
+  return product;
+};
+
+export const productServices = { addProduct, getProducts, getProduct };

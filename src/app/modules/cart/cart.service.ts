@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import AppError from '../../errors/AppError';
 import ProductModel from '../Product/product.model';
 import { TCart } from './cart.interface';
 import CartModel from './cart.model';
 
+// Add New Product To Cart If The Product Exist Increase The Quantity
 const addNewProductToCart = async (payload: TCart) => {
   const product = await ProductModel.findOne({ _id: payload.product });
   if (!product) throw new Error('Product Not Found');
@@ -24,9 +26,17 @@ const addNewProductToCart = async (payload: TCart) => {
   const cartProduct = await CartModel.create(payload);
   return cartProduct;
 };
+
+// Get All The Cart Products Of A User By The User _id
 const getMyCartProducts = async (id: string) => {
-  const cartProduct = await CartModel.find({ user: id }).populate('product');
-  return cartProduct;
+  const products = await CartModel.find({ user: id }).populate('product');
+
+  const totalPrice = products.reduce(
+    (acc, curr) => acc + curr.quantity * (curr.product as any).price,
+    0
+  );
+  console.log(totalPrice);
+  return { products, totalPrice };
 };
 
 export const cartServices = { addNewProductToCart, getMyCartProducts };

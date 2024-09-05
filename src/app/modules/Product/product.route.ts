@@ -20,6 +20,11 @@ router.post(
   productController.addProduct
 );
 
+// get All Products
 router.get('/products', productController.getProducts);
+
+// get Single Product
+
+router.get('/:id', productController.getProduct);
 
 export const productRoutes = router;
