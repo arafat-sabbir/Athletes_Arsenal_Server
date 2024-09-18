@@ -6,7 +6,7 @@ const createNewUser = catchAsync(async (req, res) => {
   const result = await userServices.createNewUser(req.body);
   sendResponse(res, {
     statusCode: 209,
-    message: 'User Added Successfully',
+    message: 'Registration Successful',
     data: result,
   });
 });
@@ -15,7 +15,7 @@ const loginUser = catchAsync(async (req, res) => {
   const result = await userServices.loginUser(req.body);
   sendResponse(res, {
     statusCode: 209,
-    message: 'User Logged In Successfully',
+    message: 'Logged In Successfully',
     data: result,
   });
 });

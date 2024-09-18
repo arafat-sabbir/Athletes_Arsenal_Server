@@ -1,8 +1,11 @@
 import express, { Application, NextFunction, Request, Response } from 'express';
-const app: Application = express();
 import cors from 'cors';
+import path from 'path';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import allRoutes from './app/routes/index';
+
+const app: Application = express();
+
 const formatDate = (date: Date) => {
   const options: Intl.DateTimeFormatOptions = {
     month: 'numeric',
@@ -31,24 +34,34 @@ const requestLogger = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-app.use(express.json());
+// Middleware setup
 app.use(
   cors({
     origin: ['https://athletes-arsenal.vercel.app', 'http://localhost:5173'],
     credentials: true,
   })
 );
-
+app.use(express.json());
 app.use(requestLogger);
 
-// use All The Routes From Routes
+// Serve static files from the public directory
+const publicDirPath = path.join(__dirname, '..', 'public');
+app.use(express.static(publicDirPath));
+
+// Use routes
 app.use('/api/v1', allRoutes);
+
+// Test route
 const test = (req: Request, res: Response) => {
   res.send('Hello NewBie!');
 };
 app.get('/', test);
+
+// Global error handler
 app.use(globalErrorHandler);
-app.all('*', (req, res) => {
+
+// Handle 404 - Not Found
+app.all('*', (req: Request, res: Response) => {
   res.status(404).json({ success: false, message: `Route Is Not Found ${req.url}` });
 });
 

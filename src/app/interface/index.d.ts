@@ -8,3 +8,13 @@ declare global {
     }
   }
 }
+
+declare global {
+  namespace Express {
+    interface Request {
+      files?: {
+        [key: string]: Express.Multer.File[]; // Adjust according to how files are structured
+      };
+    }
+  }
+}

@@ -29,6 +29,7 @@ const loginUser = async (payload: TLogin) => {
       role: user.role as string,
       name: user.name as string,
       photo: (user?.photo as string) || '/user/photo',
+      email: user.email as string,
     },
     config.access_token_secret as string,
     config.access_token_expires as string

@@ -44,13 +44,7 @@ const updateCartProductQuantity = async (user: string, cartProductId: string, qu
   if((cartProduct?.product as any)?.stockCount < quantity){
     throw new Error('Insufficient Stock');
   }
-  const quantityDifference = Number(quantity) - (cartProduct as any).quantity;
   if (!cartProduct) throw new Error('Product Not Found');
-  await ProductModel.findOneAndUpdate(
-    { _id: cartProduct.product._id },
-    { $inc: { stockCount: -quantityDifference } }, // Decrease or increase stockCount accordingly
-    { new: true }
-  );
   const result = await CartModel.updateOne(
     { user, _id: cartProductId },
     { quantity: Number(quantity) }
