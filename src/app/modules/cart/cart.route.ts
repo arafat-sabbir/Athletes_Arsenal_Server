@@ -9,18 +9,18 @@ const router = express.Router();
 // Add PRoduct TO Cart
 router.post(
   '/add-to-cart',
-  AuthorizeRequest('user'),
+  AuthorizeRequest(),
   validateRequest(cartValidation.addToCartSchema),
   cartControllers.addNewProductToCart
 );
 
 // Get All CartPRoducts
-router.get('/get-my-cart', AuthorizeRequest('user'), cartControllers.getCartProduct);
+router.get('/get-my-cart', AuthorizeRequest(), cartControllers.getCartProduct);
 
 // Update Cart Product Quantity
 router.patch(
   '/update-cart-product/:id',
-  AuthorizeRequest('user'),
+  AuthorizeRequest(),
   validateRequest(cartValidation.updateQuantitySchema),
   cartControllers.updateCartProductQuantity
 );
@@ -28,7 +28,7 @@ router.patch(
 // Delete Single Product From Cart
 router.delete(
   '/delete-cart-product/:id',
-  AuthorizeRequest('user'),
+  AuthorizeRequest(),
   cartControllers.deleteProductFromCart
 );
 

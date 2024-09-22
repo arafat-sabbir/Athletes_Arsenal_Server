@@ -6,4 +6,9 @@ const createAddress = async (payload: TAddress) => {
   return result;
 };
 
-export const addressServices = { createAddress };
+const getAddress = async (userId: string) => {
+  const result = await AddressModel.find({ user: userId })
+  return result;
+};
+
+export const addressServices = { createAddress, getAddress };
