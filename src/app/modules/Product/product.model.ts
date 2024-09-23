@@ -2,6 +2,7 @@ import { model, Schema } from 'mongoose';
 import { TProduct } from './product.interface';
 
 const productSchema = new Schema<TProduct>({
+  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   title: { type: String, required: true },
   description: { type: String, required: true },
   price: { type: Number, required: true },

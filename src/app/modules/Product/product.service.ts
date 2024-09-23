@@ -1,30 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SortOrder } from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
-import { uploadOnCloudinary } from '../../utils/cloudinary';
 import { TProduct } from './product.interface';
 import ProductModel from './product.model';
-
+import AppError from '../../errors/AppError';
+import path from 'path';
+import fs from 'fs';
 // Add New Product To Database
-const addProduct = async (files: any, product: TProduct) => {
-  const { photos, thumbnail } = files;
-  if (files) {
-    const imageName = `${product?.title}-${Date.now()}`;
-    const path = thumbnail[0]?.path;
-    //send image to cloudinary
-    const { secure_url } = await uploadOnCloudinary(imageName, path);
-    product.thumbnail = secure_url as string;
-  }
-  const productImages = [];
-  for (let i = 0; i < photos.length; i++) {
-    const imageName = `${photos[i]?.originalname}-${Date.now()}`;
-    const { secure_url } = await uploadOnCloudinary(imageName, photos[i]?.path);
-    productImages.push(secure_url);
-  }
-  product.productImages = productImages as string[];
+const addProduct = async (product: TProduct) => {
   const newProduct = await ProductModel.create(product);
-  // return newProduct;
-  return { newProduct };
+  return newProduct;
 };
 
 // Get All The Available Product From Database
@@ -59,6 +44,10 @@ const getProducts = async (query: Record<string, unknown>) => {
   return { products, totalProduct };
 };
 
+const getMyProducts = async (id: string) => {
+  const products = await ProductModel.find({ user: id }).select('-user');
+  return products;
+};
 
 // Get Single Cart Product For User By User And CartProduct _id
 
@@ -69,4 +58,53 @@ const getProduct = async (id: string) => {
   return product;
 };
 
-export const productServices = { addProduct, getProducts, getProduct };
+const deleteProduct = async (id: string) => {
+  // Find the product by id
+  const product = await ProductModel.findById(id);
+  if (!product) {
+    throw new AppError(404, 'Product not found');
+  }
+
+  // Extract the image paths from the product data
+  const thumbnailPath = product.thumbnail;
+  const imagePaths = product.productImages; // Assuming productImages is an array of image file names/paths
+
+  // Define the absolute path to the folder where the images are stored
+  const uploadDirectory = path.join(__dirname, '../../../../public');
+
+  // Helper function to safely delete an image
+  const deleteFile = (filePath: string) => {
+    const fullFilePath = path.join(uploadDirectory, filePath);
+
+    // Check if the file exists before attempting to delete
+    if (fs.existsSync(fullFilePath)) {
+      try {
+        fs.unlinkSync(fullFilePath);
+        console.log(`Successfully deleted file: ${fullFilePath}`);
+      } catch (err) {
+        console.error(`Failed to delete file: ${fullFilePath}`, err);
+      }
+    } else {
+      console.warn(`File not found: ${fullFilePath}`);
+    }
+  };
+
+  // Delete the thumbnail image
+  if (thumbnailPath) {
+    deleteFile(thumbnailPath);
+  }
+
+  // Delete each product image
+  if (imagePaths && Array.isArray(imagePaths)) {
+    imagePaths.forEach((imagePath) => {
+      deleteFile(imagePath);
+    });
+  }
+
+  // Now, delete the product from the database
+  await ProductModel.findByIdAndDelete(id);
+
+  return 'Product deleted successfully';
+};
+
+export const productServices = { addProduct, getProducts, getProduct, getMyProducts,deleteProduct };

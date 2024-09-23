@@ -30,7 +30,6 @@ const addNewProductToCart = async (payload: TCart) => {
 // Get All The Cart Products Of A User By The User _id And The Total Price Also
 const getMyCartProducts = async (id: string) => {
   const products = await CartModel.find({ user: id }).populate('product');
-
   const totalPrice = products.reduce(
     (acc, curr) => acc + curr.quantity * (curr.product as any).price,
     0
