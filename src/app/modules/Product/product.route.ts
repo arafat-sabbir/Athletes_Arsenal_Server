@@ -36,6 +36,6 @@ router.delete('/delete-product/:id',AuthorizeRequest(), productController.delete
 
 // get Single Product
 
-// router.get('/:id', productController.getProduct);
+router.get('/get-product/:id', productController.getProduct);
 
 export const productRoutes = router;

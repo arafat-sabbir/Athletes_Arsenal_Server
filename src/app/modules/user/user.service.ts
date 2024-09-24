@@ -7,6 +7,10 @@ import { generateToken } from '../../utils/generateToken';
 import config from '../../config';
 
 const createNewUser = async (user: TUser) => {
+  const existingUser = await UserModel.findOne({ email: user.email });
+  if (existingUser) {
+    throw new AppError(400,"User Already Exist")
+  }
   const { password, ...rest } = user;
   const hashedPassword = await hashInfo(password);
   const newUser = await UserModel.create({ ...rest, password: hashedPassword });

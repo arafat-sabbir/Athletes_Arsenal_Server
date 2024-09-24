@@ -9,10 +9,10 @@ const router = express.Router();
 
 router.post(
   '/register',
-  upload.single('photo'),
+  upload.fields([{ name: 'image', maxCount: 1 }]),
   convertFilePath,
   (req: Request, res: Response, next: NextFunction) => {
-    req.body = { ...req.body, photo: req.file?.path };
+    req.body = { ...req.body, photo: req.files?.['image']?.[0]?.path };
     next();
   },
   validateRequest(userValidation.createUserSchema),
